@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Collection — Celvador Luxe</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --crimson: #630d16;
+      --crimson-dark: #45080e;
+      --crimson-soft: #fbf5f5;
+      --charcoal: #121214;
+      --gray-muted: #71717a;
+      --bg-canvas: #fcfbfa;
+      --border: rgba(99, 13, 22, 0.12);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      background-color: var(--bg-canvas);
+      color: var(--charcoal);
+      font-family: var(--font-sans);
+    }
+
+    /* Top Navigation Header with 2-wheel trolley */
+    header.cat-nav {
+      background: #ffffff;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee8e5;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .back-btn { font-size: 1.25rem; text-decoration: none; color: var(--charcoal); font-weight: 700; }
+    .brand-title { font-family: var(--font-serif); font-size: 1.15rem; color: var(--crimson); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; text-decoration: none; }
+
+    .nav-cart-btn-link {
+      text-decoration: none;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .cart-svg-trolley {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--charcoal);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .bag-badge {
+      position: absolute; top: -6px; right: -8px; background: var(--crimson); color: #fff;
+      font-size: 0.55rem; font-weight: 700; width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .site-container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 14px;
+      margin: 0 auto;
+      min-height: 70vh;
+    }
+
+    /* Category Title Bar */
+    .cat-header-strip {
+      padding: 18px 0 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .cat-title-text {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--crimson-dark);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    .cat-count-text {
+      font-size: 0.72rem;
+      color: var(--gray-muted);
+      font-weight: 600;
+    }
+
+    /* Quick Filter Chips */
+    .filter-chips-slider {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+    .filter-chips-slider::-webkit-scrollbar { display: none; }
+    .chip-btn {
+      flex: 0 0 auto;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #dfc7b9;
+      background: #ffffff;
+      color: #3f3f46;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .chip-btn.active {
+      background: var(--crimson);
+      color: #ffffff;
+      border-color: var(--crimson);
+    }
+
+    /* 2-Column Grid with Uniform 3:4 aspect ratio */
+    .grid-2-col {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+
+    .prod-card {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #eee8e5;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .prod-img-box {
+      width: 100%;
+      height: 215px;
+      overflow: hidden;
+      background: #fbf9f8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #f6f1ee;
+    }
+    .prod-img-box img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover;
+      object-position: center center;
+      transition: transform 0.3s ease;
+    }
+    .prod-card:hover .prod-img-box img { transform: scale(1.03); }
+
+    .prod-meta {
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .prod-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #1f1f23;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .prod-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .prod-price { font-size: 0.86rem; font-weight: 700; color: var(--crimson); }
+    .prod-rating { font-size: 0.65rem; color: #71717a; }
+    
+    .btn-buy-card {
+      width: 100%;
+      background: var(--crimson-soft);
+      border: 1px solid var(--border);
+      color: var(--crimson);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 7px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: auto;
+      transition: all 0.2s;
+    }
+    .btn-buy-card:hover { background: var(--crimson); color: #fff; }
+
+    /* Coming Soon Elegant Showcase Box */
+    .coming-soon-box {
+      background: #ffffff;
+      border: 1px dashed rgba(99, 13, 22, 0.25);
+      border-radius: 16px;
+      padding: 45px 20px;
+      text-align: center;
+      margin: 20px 0 40px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+    }
+    .coming-soon-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: var(--crimson-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--crimson);
+    }
+    .coming-soon-box h3 {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      color: var(--crimson-dark);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .coming-soon-box p {
+      font-size: 0.78rem;
+      color: var(--gray-muted);
+      max-width: 380px;
+      margin: 0 auto 18px;
+      line-height: 1.5;
+    }
+    .btn-explore-all {
+      display: inline-block;
+      background: var(--crimson);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .btn-explore-all:hover { background: var(--crimson-dark); }
+
+    footer.editorial-footer {
+      background: #140709;
+      color: #a1a1aa;
+      padding: 24px 14px 20px;
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="cat-nav">
+    <div class="nav-left">
+      <a href="index.html" class="back-btn">&larr;</a>
+      <a href="index.html" class="brand-title">Celvador Luxe</a>
+    </div>
+    <div>
+      <a href="cart.html" class="nav-cart-btn-link" title="Bag">
+        <svg class="cart-svg-trolley" viewBox="0 0 24 24">
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          <circle cx="10" cy="20.5" r="1.5"></circle>
+          <circle cx="18" cy="20.5" r="1.5"></circle>
+        </svg>
+        <span class="bag-badge" id="catCartCount">0</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="site-container">
+    <!-- Header Title -->
+    <div class="cat-header-strip">
+      <h1 class="cat-title-text" id="catHeadingTitle">All Collections</h1>
+      <span class="cat-count-text" id="catProductCount">Showing items</span>
+    </div>
+
+    <!-- Category Switcher Chips -->
+    <div class="filter-chips-slider">
+      <a href="category.html?type=all" class="chip-btn" id="chip-all">All Items</a>
+      <a href="category.html?type=necklace" class="chip-btn" id="chip-necklace">Necklaces</a>
+      <a href="category.html?type=earring" class="chip-btn" id="chip-earring">Earrings</a>
+      <a href="category.html?type=ring" class="chip-btn" id="chip-ring">Rings</a>
+      <a href="category.html?type=bracelet" class="chip-btn" id="chip-bracelet">Bracelets</a>
+      <a href="category.html?type=pendant" class="chip-btn" id="chip-pendant">Pendants</a>
+    </div>
+
+    <!-- Product Grid or Coming Soon Container -->
+    <div id="contentViewContainer"></div>
+  </div>
+
+  <footer class="editorial-footer">
+    &copy; 2026 Celvador Luxe. Handcrafted Haute Joaillerie.
+  </footer>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // Authentic catalog with only genuine product-to-category mappings
+      var fullCatalog = [
+        // Necklaces
+        {
+          id: "suite-2",
+          name: "Imperial Pearl & Floral Tourmaline Choker",
+          type: "necklace",
+          price: 2899,
+          priceFormatted: "₹2,899",
+          rating: "4.9",
+          img: "1000197819.png"
+        },
+        {
+          id: "suite-3",
+          name: "Antique Matte Gold & Fuchsia Tourmaline Set",
+          type: "necklace",
+          price: 3299,
+          priceFormatted: "₹3,299",
+          rating: "4.9",
+          img: "1000198231.png"
+        },
+        {
+          id: "suite-4",
+          name: "Celvador Austrian Diamond Polki Suite",
+          type: "necklace",
+          price: 3499,
+          priceFormatted: "₹3,499",
+          rating: "5.0",
+          img: "1000199104.png"
+        },
+        {
+          id: "suite-5",
+          name: "Rose Gold Flora Blush Quartz Set",
+          type: "necklace",
+          price: 2799,
+          priceFormatted: "₹2,799",
+          rating: "4.8",
+          img: "1000199338.png"
+        },
+        {
+          id: "suite-4-bridal",
+          name: "Royal Polki Bridal Wedding Set",
+          type: "necklace",
+          price: 3599,
+          priceFormatted: "₹3,599",
+          rating: "4.9",
+          img: "1000198216.png"
+        },
+
+        // Genuine Earrings Only (Removed wrong necklace photo)
+        {
+          id: "item-jhumka-1",
+          name: "Oxidised Silver Boho Jhumka & Chaandbali",
+          type: "earring",
+          price: 1899,
+          priceFormatted: "₹1,899",
+          rating: "4.9",
+          img: "1000200159.png"
+        },
+        {
+          id: "suite-3-earrings",
+          name: "Heritage Jadau Filigree Earrings",
+          type: "earring",
+          price: 1499,
+          priceFormatted: "₹1,499",
+          rating: "4.8",
+          img: "1000198197.png"
+        },
+
+        // Pendants
+        {
+          id: "suite-1",
+          name: "Crescent Ruby & South Sea Pearl Locket",
+          type: "pendant",
+          price: 2499,
+          priceFormatted: "₹2,499",
+          rating: "4.8",
+          img: "1000197505.png"
+        },
+        {
+          id: "suite-1-pendant-close",
+          name: "South Sea Ruby Cabochon Pendant",
+          type: "pendant",
+          price: 2199,
+          priceFormatted: "₹2,199",
+          rating: "4.8",
+          img: "1000197507.png"
+        }
+
+        // NOTE: Rings and Bracelets are empty right now.
+        // Once you add items with type: "ring" or type: "bracelet",
+        // the "Coming Soon" card will automatically disappear!
+      ];
+
+      function updateBagCounter() {
+        var cart = JSON.parse(localStorage.getItem("celvador_cart") || "[]");
+        var count = cart.reduce(function(acc, item) { return acc + (item.qty || 1); }, 0);
+        var el = document.getElementById("catCartCount");
+        if (el) el.innerText = count;
+      }
+
+      window.openProduct = function(prod) {
+        localStorage.setItem("celvador_active_item", JSON.stringify(prod));
+        window.location.href = "product.html?id=" + encodeURIComponent(prod.id);
+      };
+
+      function renderCategoryPage() {
+        var params = new URLSearchParams(window.location.search);
+        var rawType = (params.get("type") || "all").toLowerCase();
+
+        // Update active chip
+        var chips = document.querySelectorAll(".chip-btn");
+        chips.forEach(function(c) { c.classList.remove("active"); });
+        var activeChip = document.getElementById("chip-" + rawType) || document.getElementById("chip-all");
+        if (activeChip) activeChip.classList.add("active");
+
+        // Set Heading & Category Name
+        var titleElem = document.getElementById("catHeadingTitle");
+        var readableName = "All Collections";
+        if (rawType === "necklace") readableName = "Necklaces Collection";
+        else if (rawType === "earring") readableName = "Earrings Collection";
+        else if (rawType === "ring") readableName = "Rings Collection";
+        else if (rawType === "bracelet") readableName = "Bracelets Collection";
+        else if (rawType === "pendant") readableName = "Pendants Collection";
+        titleElem.innerText = readableName;
+
+        // Filter genuine items
+        var filtered = fullCatalog;
+        if (rawType !== "all") {
+          filtered = fullCatalog.filter(function(item) {
+            return item.type === rawType;
+          });
+        }
+
+        var container = document.getElementById("contentViewContainer");
+
+        // If category has no products currently: Show Coming Soon
+        if (filtered.length === 0) {
+          document.getElementById("catProductCount").innerText = "Coming Soon";
+          container.innerHTML = '<div class="coming-soon-box">' +
+            '<div class="coming-soon-icon">' +
+              '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<circle cx="12" cy="12" r="10"></circle>' +
+                '<polyline points="12 6 12 12 16 14"></polyline>' +
+              '</svg>' +
+            '</div>' +
+            '<h3>Launching Soon</h3>' +
+            '<p>Our master artisans are currently curating the exclusive ' + readableName + '. New designs will be unveiled shortly.</p>' +
+            '<a href="category.html?type=all" class="btn-explore-all">Explore Other Designs</a>' +
+          '</div>';
+        } else {
+          // Render Real Products Grid
+          document.getElementById("catProductCount").innerText = filtered.length + " Designs Available";
+          container.innerHTML = '<div class="grid-2-col">' +
+            filtered.map(function(item, idx) {
+              return '<div class="prod-card">' +
+                '<div class="prod-img-box" onclick="openProduct(window.filteredCatalog[' + idx + '])">' +
+                  '<img src="' + item.img + '" alt="' + item.name + '">' +
+                '</div>' +
+                '<div class="prod-meta">' +
+                  '<div class="prod-title" onclick="openProduct(window.filteredCatalog[' + idx + '])">' + item.name + '</div>' +
+                  '<div class="prod-price-row">' +
+                    '<span class="prod-price">' + item.priceFormatted + '</span>' +
+                    '<span class="prod-rating">★ ' + item.rating + '</span>' +
+                  '</div>' +
+                  '<button class="btn-buy-card" onclick="openProduct(window.filteredCatalog[' + idx + '])">View Details</button>' +
+                '</div>' +
+              '</div>';
+            }).join("") +
+          '</div>';
+        }
+
+        window.filteredCatalog = filtered;
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        renderCategoryPage();
+        updateBagCounter();
+      });
+    })();
+  </script>
+</body>
+</html>

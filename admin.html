@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Atelier Admin — Celvador Luxe</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --crimson: #5e0d16;
+      --crimson-dark: #3b050b;
+      --crimson-soft: #fbf5f5;
+      --gold: #c5a059;
+      --gold-dark: #9f7d38;
+      --charcoal: #1f1f23;
+      --gray-muted: #6e717e;
+      --border: #ede8e3;
+      --bg-page: #f7f5f2;
+      --success: #03a685;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-page); color: var(--charcoal); font-family: var(--font-sans); line-height: 1.5; padding-bottom: 80px; }
+
+    header.admin-nav {
+      background: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-brand { font-family: var(--font-serif); font-size: 1.25rem; color: var(--crimson); text-transform: uppercase; font-weight: 700; letter-spacing: 2px; text-decoration: none; }
+    .admin-badge { background: var(--crimson-soft); color: var(--crimson); font-size: 0.68rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(99,13,22,0.2); }
+
+    .admin-container {
+      max-width: 680px;
+      margin: 20px auto;
+      padding: 0 14px;
+    }
+
+    .admin-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.025);
+    }
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.col-span-2 { grid-column: span 2; }
+    .form-group label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-muted); }
+    .form-group input, .form-group select {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #ded7cf;
+      font-size: 0.84rem;
+      outline: none;
+      font-family: inherit;
+      background: #ffffff;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--crimson); }
+
+    .btn-add-prod {
+      width: 100%;
+      background: var(--crimson);
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-add-prod:active { background: var(--crimson-dark); }
+
+    .product-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f3efeb;
+      font-size: 0.8rem;
+    }
+    .product-list-item:last-child { border-bottom: none; }
+    .prod-info-left { display: flex; align-items: center; gap: 12px; }
+    .prod-thumb { width: 40px; height: 50px; border-radius: 6px; object-fit: cover; background: #f7f5f2; border: 1px solid var(--border); }
+    .prod-name-price { display: flex; flex-direction: column; }
+    .prod-item-title { font-weight: 700; color: var(--charcoal); }
+    .prod-item-sub { color: var(--gray-muted); font-size: 0.72rem; }
+
+    .btn-del-prod {
+      background: #fff5f5;
+      color: #e53e3e;
+      border: 1px solid #fed7d7;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .success-toast {
+      display: none;
+      background: #eefaf6;
+      color: #038a6f;
+      border: 1px solid #ccefe3;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="admin-nav">
+    <a href="index.html" class="admin-brand">Celvador Luxe</a>
+    <span class="admin-badge">Admin Studio</span>
+  </header>
+
+  <div class="admin-container">
+    
+    <!-- ADD NEW PRODUCT CARD -->
+    <div class="admin-card">
+      <div class="card-title">Add New Haute Joaillerie Piece</div>
+      <div class="success-toast" id="successToast">Product successfully added to live store!</div>
+      
+      <form id="addProductForm" onsubmit="handleAddNewProduct(event)">
+        <div class="form-grid">
+          
+          <div class="form-group col-span-2">
+            <label>Product Name *</label>
+            <input type="text" id="pName" placeholder="e.g. Imperial Ruby Kundan Necklace" required>
+          </div>
+
+          <div class="form-group">
+            <label>Price (₹) *</label>
+            <input type="number" id="pPrice" placeholder="e.g. 24999" required>
+          </div>
+
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="pCategory" required>
+              <option value="necklaces">Necklaces</option>
+              <option value="rings">Rings</option>
+              <option value="earrings">Earrings</option>
+              <option value="bracelets">Bracelets</option>
+              <option value="bestsellers">Bestsellers</option>
+            </select>
+          </div>
+
+          <div class="form-group col-span-2">
+            <label>Product Image URL *</label>
+            <input type="url" id="pImg" placeholder="Paste direct image link (https://...)" required>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-add-prod">Publish Product to Store →</button>
+      </form>
+    </div>
+
+    <!-- EXISTING / ADDED PRODUCTS MANAGER -->
+    <div class="admin-card">
+      <div class="card-title">
+        <span>Manage Store Inventory</span>
+        <span style="font-size: 0.72rem; color: var(--gray-muted);" id="totalProdCount">0 Items</span>
+      </div>
+      <div id="adminProductListContainer">
+        <!-- Dynamic list will load here -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Default initial products agar localStorage mein kuch na ho
+    var defaultProducts = [
+      { id: "p1", name: "Imperial Ruby Kundan Necklace", price: 2899, category: "necklaces", img: "1790910755056.png" },
+      { id: "p2", name: "Royal Polki Diamond Ring", price: 4599, category: "rings", img: "1790910755056.png" }
+    ];
+
+    function getStoreProducts() {
+      var stored = localStorage.getItem("celvador_custom_products");
+      if (!stored) {
+        localStorage.setItem("celvador_custom_products", JSON.stringify(defaultProducts));
+        return defaultProducts;
+      }
+      return JSON.parse(stored);
+    }
+
+    function saveStoreProducts(products) {
+      localStorage.setItem("celvador_custom_products", JSON.stringify(products));
+      renderAdminProductList();
+    }
+
+    function handleAddNewProduct(e) {
+      e.preventDefault();
+      
+      var name = document.getElementById("pName").value.trim();
+      var price = document.getElementById("pPrice").value.trim();
+      var category = document.getElementById("pCategory").value;
+      var img = document.getElementById("pImg").value.trim();
+
+      var newProd = {
+        id: "prod_" + Date.now(),
+        name: name,
+        price: Number(price),
+        category: category,
+        img: img
+      };
+
+      var products = getStoreProducts();
+      products.unshift(newProd); // Sabse upar add hoga
+      saveStoreProducts(products);
+
+      // Reset form & show success toast
+      document.getElementById("addProductForm").reset();
+      var toast = document.getElementById("successToast");
+      toast.style.display = "block";
+      setTimeout(function() {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    window.deleteStoreProduct = function(prodId) {
+      if (confirm("Aap is product ko store se remove karna chahte hain?")) {
+        var products = getStoreProducts();
+        var filtered = products.filter(function(p) { return p.id !== prodId; });
+        saveStoreProducts(filtered);
+      }
+    };
+
+    function renderAdminProductList() {
+      var products = getStoreProducts();
+      var container = document.getElementById("adminProductListContainer");
+      document.getElementById("totalProdCount").innerText = products.length + " Items";
+
+      if (products.length === 0) {
+        container.innerHTML = '<p style="font-size:0.78rem; color:var(--gray-muted); text-align:center; padding: 20px;">Koi custom product added nahi hai.</p>';
+        return;
+      }
+
+      container.innerHTML = products.map(function(p) {
+        return '<div class="product-list-item">' +
+          '<div class="prod-info-left">' +
+            '<img src="' + p.img + '" class="prod-thumb" alt="img">' +
+            '<div class="prod-name-price">' +
+              '<span class="prod-item-title">' + p.name + '</span>' +
+              '<span class="prod-item-sub">₹' + Number(p.price).toLocaleString("en-IN") + ' • <b style="text-transform:uppercase;">' + p.category + '</b></span>' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn-del-prod" onclick="deleteStoreProduct(\'' + p.id + '\')">Remove</button>' +
+        '</div>';
+      }).join("");
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      renderAdminProductList();
+    });
+  </script>
+</body>
+</html>

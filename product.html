@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Product Details — Celvador Luxe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --crimson: #630d16;
+      --crimson-dark: #45080e;
+      --crimson-soft: #fbf5f5;
+      --charcoal: #282c3f;
+      --gray-muted: #535766;
+      --border: #eaeaec;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #ffffff; color: var(--charcoal); font-family: var(--font-sans); }
+
+    /* Top Navigation Header with 2-wheel trolley */
+    header.myntra-nav {
+      background: #ffffff;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .back-arrow-btn { font-size: 1.3rem; text-decoration: none; color: var(--charcoal); font-weight: 700; }
+    .brand-logo-text { font-family: var(--font-serif); font-size: 1.15rem; color: var(--crimson); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; text-decoration: none; }
+    
+    .nav-cart-btn-link {
+      text-decoration: none;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .cart-svg-trolley {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--charcoal);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .bag-badge {
+      position: absolute; top: -6px; right: -8px; background: var(--crimson); color: #fff;
+      font-size: 0.55rem; font-weight: 700; width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Top Multi-Image Horizontal Swipe Stage */
+    .pdp-slider-wrapper {
+      position: relative;
+      width: 100%;
+      height: 390px;
+      background: #fbf9f8;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .pdp-slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pdp-slider-track::-webkit-scrollbar { display: none; }
+    .pdp-slide-item {
+      flex: 0 0 100%;
+      min-width: 100%;
+      height: 100%;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    .pdp-slide-item img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .pdp-dots-bar {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 10;
+    }
+    .pdp-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+    .pdp-dot.active {
+      background: var(--crimson);
+      width: 16px;
+      border-radius: 4px;
+    }
+
+    .rating-pill-float {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 10;
+    }
+    .rating-star { color: #14958f; font-weight: 800; }
+
+    /* Core Product Information */
+    .pdp-core-info { padding: 14px 14px 6px; }
+    .brand-subheading { font-size: 0.95rem; font-weight: 700; color: #282c3f; margin-bottom: 3px; }
+    .title-detail { font-size: 0.8rem; color: var(--gray-muted); line-height: 1.4; margin-bottom: 8px; }
+    
+    .price-strip { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .selling-price { font-size: 1.3rem; font-weight: 700; color: #282c3f; }
+    .mrp-price { font-size: 0.85rem; color: #94969f; text-decoration: line-through; }
+    .discount-tag { font-size: 0.85rem; color: #ff905a; font-weight: 700; }
+    .tax-text { font-size: 0.68rem; color: #03a685; font-weight: 600; margin-bottom: 12px; }
+
+    /* Offer Banner */
+    .mega-offer-banner {
+      background: #fdf5f6;
+      border: 1px solid #fae1e4;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .offer-title { font-size: 0.75rem; font-weight: 700; color: #535766; }
+    .offer-title span { color: var(--crimson); }
+    .offer-code-tag { background: #03a685; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 6px; border-radius: 4px; }
+
+    /* Side-by-Side Action Buttons */
+    .action-btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .btn-action-cart {
+      flex: 1;
+      padding: 12px 8px;
+      background: #ffffff;
+      border: 1.5px solid var(--crimson);
+      color: var(--crimson);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-action-cart svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--crimson);
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .btn-action-cart:hover { background: var(--crimson-soft); }
+    .btn-action-buy {
+      flex: 1;
+      padding: 12px 8px;
+      background: var(--crimson);
+      border: 1.5px solid var(--crimson);
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action-buy:hover { background: var(--crimson-dark); }
+
+    .separator-bar { height: 7px; background: #f5f5f6; border-top: 1px solid #eaeaec; border-bottom: 1px solid #eaeaec; margin: 12px 0; }
+
+    /* Services Block */
+    .services-block { padding: 8px 14px 12px; }
+    .block-heading { font-size: 0.84rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #282c3f; margin-bottom: 12px; }
+    
+    .delivery-status-card {
+      background: #fff5f6;
+      border: 1px solid #fde2e6;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .delivery-status-card span { font-size: 0.78rem; font-weight: 700; color: var(--crimson); }
+
+    .trust-badges-list { display: flex; flex-direction: column; gap: 8px; font-size: 0.75rem; color: var(--gray-muted); }
+    .trust-item { display: flex; align-items: center; gap: 8px; }
+    .trust-icon { color: #03a685; font-weight: 800; font-size: 0.85rem; }
+
+    /* Specifications Details Block */
+    .specs-block { padding: 8px 14px 12px; }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #fbfbfa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .spec-cell { display: flex; flex-direction: column; gap: 2px; }
+    .spec-label { font-size: 0.68rem; color: #94969f; text-transform: uppercase; font-weight: 600; }
+    .spec-val { font-size: 0.78rem; color: #282c3f; font-weight: 600; }
+
+    .care-block { padding: 8px 14px 12px; font-size: 0.74rem; color: var(--gray-muted); line-height: 1.6; }
+
+    /* Similar Products Horizontal Scroll Slider */
+    .similar-block { padding: 8px 14px 12px; }
+    .similar-slider {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .similar-slider::-webkit-scrollbar { display: none; }
+    .sim-card {
+      flex: 0 0 140px;
+      min-width: 140px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .sim-img-box { width: 100%; height: 135px; background: #faf9f8; display: flex; align-items: center; justify-content: center; padding: 6px; }
+    .sim-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .sim-meta { padding: 8px; }
+    .sim-title { font-size: 0.7rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .sim-price { font-size: 0.76rem; font-weight: 700; color: var(--crimson); }
+
+    /* Big Image Showcase Gallery (Amazon Style Banners) */
+    .gallery-showcase-block { padding: 10px 14px 14px; }
+    .big-showcase-card {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .big-showcase-card img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+    }
+    .showcase-desc-box { padding: 12px; background: #ffffff; }
+    .showcase-desc-box h5 {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--crimson);
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .showcase-desc-box p { font-size: 0.74rem; color: var(--gray-muted); line-height: 1.5; }
+
+    /* Customer Reviews */
+    .reviews-section-block { padding: 8px 14px 14px; }
+    .review-score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .badge-rating-big {
+      background: #14958f; color: #fff; font-size: 0.95rem; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .review-card-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fafafb;
+    }
+    .rev-user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .rev-user-name { font-size: 0.76rem; font-weight: 700; color: #282c3f; }
+    .rev-date { font-size: 0.65rem; color: #94969f; }
+    .rev-comment { font-size: 0.74rem; color: #535766; line-height: 1.5; }
+
+    /* Products You May Like: 24 Full Grid */
+    .recommendations-block { padding: 8px 14px 28px; }
+    .recom-2-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px;
+    }
+    .recom-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .recom-img-box {
+      width: 100%;
+      height: 175px;
+      background: #faf8f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-bottom: 1px solid #f2f2f3;
+    }
+    .recom-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .recom-meta { padding: 10px; }
+    .recom-brand { font-size: 0.7rem; font-weight: 700; color: #282c3f; margin-bottom: 2px; }
+    .recom-title { font-size: 0.72rem; color: var(--gray-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .recom-price-row { display: flex; align-items: baseline; gap: 6px; }
+    .recom-sell-price { font-size: 0.8rem; font-weight: 700; color: var(--crimson); }
+    .recom-mrp-price { font-size: 0.68rem; color: #94969f; text-decoration: line-through; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header with 2-Wheel Trolley Cart -->
+  <header class="myntra-nav">
+    <div class="nav-left">
+      <a href="index.html" class="back-arrow-btn">&larr;</a>
+      <a href="index.html" class="brand-logo-text">Celvador Luxe</a>
+    </div>
+    <div>
+      <a href="cart.html" class="nav-cart-btn-link" title="Bag">
+        <svg class="cart-svg-trolley" viewBox="0 0 24 24">
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          <circle cx="10" cy="20.5" r="1.5"></circle>
+          <circle cx="18" cy="20.5" r="1.5"></circle>
+        </svg>
+        <span class="bag-badge" id="pdpCartCount">0</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Top Swipe Slider -->
+  <div class="pdp-slider-wrapper">
+    <div class="pdp-slider-track" id="topImageSliderTrack"></div>
+    <div class="pdp-dots-bar" id="topSliderDots"></div>
+    <div class="rating-pill-float">
+      <span id="pdpRatingVal">5.0</span> <span class="rating-star">★</span> | 128 Reviews
+    </div>
+  </div>
+
+  <!-- Core Product Details -->
+  <div class="pdp-core-info">
+    <h3 class="brand-subheading">Celvador Haute Joaillerie</h3>
+    <p class="title-detail" id="pdpTitleText">Austrian Diamond Polki Suite</p>
+    
+    <div class="price-strip">
+      <span class="selling-price" id="pdpPriceVal">₹3,499</span>
+      <span class="mrp-price" id="pdpMrpVal">₹6,998</span>
+      <span class="discount-tag">(50% OFF)</span>
+    </div>
+    <div class="tax-text">Inclusive of all taxes</div>
+
+    <div class="mega-offer-banner">
+      <div class="offer-title">Special Offer: Get at <span>₹1,999</span> with coupon</div>
+      <span class="offer-code-tag">FESTIVEVIP</span>
+    </div>
+
+    <!-- Active Action Buttons Directly Below Offer with exact Trolley Icon -->
+    <div class="action-btn-row">
+      <button class="btn-action-cart" onclick="addToBagAction()">
+        <svg viewBox="0 0 24 24">
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          <circle cx="10" cy="20.5" r="1.5"></circle>
+          <circle cx="18" cy="20.5" r="1.5"></circle>
+        </svg>
+        Add to Cart
+      </button>
+      <button class="btn-action-buy" onclick="buyNowAction()">
+        Buy Now &rarr;
+      </button>
+    </div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- Delivery & Services Block -->
+  <div class="services-block">
+    <h4 class="block-heading">Delivery &amp; Services</h4>
+    <div class="delivery-status-card">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#630d16" stroke-width="2">
+        <rect x="1" y="3" width="15" height="13"></rect>
+        <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+      </svg>
+      <div>
+        <span>Express Delivery in 2-3 Days</span>
+        <div style="font-size: 0.68rem; color: #535766;">Dispatched in royal velvet keepsake box</div>
+      </div>
+    </div>
+
+    <div class="trust-badges-list">
+      <div class="trust-item"><span class="trust-icon">✓</span><span>Cash on Delivery is available across India</span></div>
+      <div class="trust-item"><span class="trust-icon">✓</span><span>Hassle-free 48 hours exchange &amp; transit replacement</span></div>
+    </div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- Specifications Details Block -->
+  <div class="specs-block">
+    <h4 class="block-heading">Product Details</h4>
+    <div class="specs-grid">
+      <div class="spec-cell"><span class="spec-label">Type</span><span class="spec-val" id="specCatVal">Necklace Suite</span></div>
+      <div class="spec-cell"><span class="spec-label">Plating</span><span class="spec-val">24K Royal Micro Gold</span></div>
+    </div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <div class="care-block">
+    <h4 class="block-heading" style="margin-bottom: 6px;">Material &amp; Care</h4>
+    <p>Wipe with soft dry cloth after every use. Avoid water, perfume and sanitizers.</p>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- SIMILAR PRODUCTS HORIZONTAL SWIPE SLIDER (RESTORED) -->
+  <div class="similar-block">
+    <h4 class="block-heading">Similar Products</h4>
+    <div class="similar-slider" id="similarProductsTrack"></div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- Big Image Showcase Gallery (Amazon Style Banners) -->
+  <div class="gallery-showcase-block" id="galleryShowcaseBlock">
+    <h4 class="block-heading">Product Image Gallery &amp; Craftsmanship</h4>
+    <div id="dynamicGalleryContainer"></div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- Customer Reviews Section -->
+  <div class="reviews-section-block">
+    <h4 class="block-heading">Ratings &amp; Reviews</h4>
+    <div class="review-score-header">
+      <div class="badge-rating-big">5.0 ★</div>
+      <span style="font-size: 0.74rem; color: #535766;">128 Verified Ratings • 22 Reviews</span>
+    </div>
+
+    <div class="review-card-item">
+      <div class="rev-user-row">
+        <span class="rev-user-name">Shubhangi Gupta</span>
+        <span class="rev-date">Feb 15, 2026</span>
+      </div>
+      <p class="rev-comment">"This is a beautiful piece of jewellery with AD studded, gold plated finish. The lustre looks like real gold!"</p>
+    </div>
+  </div>
+
+  <div class="separator-bar"></div>
+
+  <!-- Products You May Like: 24 Full Grid -->
+  <div class="recommendations-block">
+    <h4 class="block-heading">Products You May Like</h4>
+    <div class="recom-2-grid" id="recommendationsGrid"></div>
+  </div>
+
+  <script>
+    var currentItem = null;
+
+    // Database with exact filenames from directory
+    var suitesDatabase = [
+      {
+        id: "suite-1",
+        name: "Crescent Ruby & South Sea Pearl Locket Set",
+        price: 2499,
+        img: "1000197505.png",
+        cat: "Pendant Set",
+        rating: "4.8",
+        allImages: ["1000197505.png", "1000197507.png", "1000198233.png", "1000197506.png", "1000197504.png"],
+        gallery: [
+          { img: "1000197507.png", title: "Handheld Close-up Artistry", desc: "Intricate ruby crescent setting crafted with precision." },
+          { img: "1000198233.png", title: "Royal Occasion Wear", desc: "Designed to sit gracefully against silk and festive gowns." },
+          { img: "1000197506.png", title: "Side Profile & Drape", desc: "Balanced pearl drops that remain steady and comfortable." },
+          { img: "1000197504.png", title: "Velvet Luxury Flatlay", desc: "Shipped in royal packaging preserving lifetime shine." }
+        ]
+      },
+      {
+        id: "suite-2",
+        name: "Imperial Pearl & Floral Tourmaline Choker",
+        price: 2899,
+        img: "1000197819.png",
+        cat: "Necklace Set",
+        rating: "4.9",
+        allImages: ["1000197819.png", "1000197814.png", "1000197815.png", "1000198232.png", "1000197818.png"],
+        gallery: [
+          { img: "1000197815.png", title: "Micro-Plated Pearl Detailing", desc: "Hand-strung lustre beads with floral accents." },
+          { img: "1000198232.png", title: "High-Fashion Bridal Look", desc: "Statement occasion wear designed for unforgettable weddings." },
+          { img: "1000197818.png", title: "Vanity Desk Presentation", desc: "Heirloom craftsmanship made for modern luxury." },
+          { img: "1000197814.png", title: "Marble Flatlay Showcase", desc: "Includes matching drop earrings and adjustable chord." }
+        ]
+      },
+      {
+        id: "suite-3",
+        name: "Antique Matte Gold & Fuchsia Tourmaline Set",
+        price: 3299,
+        img: "1000198231.png",
+        cat: "Bridal Set",
+        rating: "4.9",
+        allImages: ["1000198231.png", "1000198197.png", "1000198200.png", "1000198204.png", "1000198210.png"],
+        gallery: [
+          { img: "1000198197.png", title: "Earrings Display Stand", desc: "Matching traditional jhumka drops with ruby cabochons." },
+          { img: "1000198200.png", title: "Earring Craftsmanship", desc: "Filigree floral cutwork with antique gold beads." },
+          { img: "1000198204.png", title: "Celebration Wear", desc: "Featherlight ergonomic counterbalances for evening comfort." },
+          { img: "1000198210.png", title: "Mahogany Keepsake Box", desc: "Complete bridal set preserved in velvet-lined casket." }
+        ]
+      },
+      {
+        id: "suite-4",
+        name: "Celvador Austrian Diamond Polki Suite",
+        price: 3499,
+        img: "1000199104.png",
+        cat: "Haute Suite",
+        rating: "5.0",
+        allImages: ["1000199104.png", "1000198213.png", "1000198215.png", "1000198216.png", "1000198218.png", "1000198217.png"],
+        gallery: [
+          { img: "1000198213.png", title: "Silk Tassel Drape", desc: "High-fashion silver polish studded with hydro crystals." },
+          { img: "1000198215.png", title: "Necklace Centerpiece", desc: "Faceted Austrian stones reflecting pure diamond fire." },
+          { img: "1000198216.png", title: "Bride Opening Suite", desc: "Complete set with Maang Tikka and matching earrings." },
+          { img: "1000198218.png", title: "Vanity Mirror Look", desc: "Royal styling worn on special wedding celebrations." },
+          { img: "1000198217.png", title: "Archival Keepsake Box", desc: "Anti-tarnish casing to ensure eternal heirloom brilliance." }
+        ]
+      },
+      {
+        id: "suite-5",
+        name: "Rose Gold Flora Blush Quartz Set",
+        price: 2799,
+        img: "1000199338.png",
+        cat: "Collar Set",
+        rating: "4.8",
+        allImages: ["1000199338.png", "1000199337.png", "1000199339.png", "1000199352.png"],
+        gallery: [
+          { img: "1000199337.png", title: "Blush Quartz Details", desc: "Rose gold settings with precision-cut pink tourmaline crystals." },
+          { img: "1000199339.png", title: "Evening Reception Gown Wear", desc: "Sophisticated floral lattice that contours the neckline." },
+          { img: "1000199352.png", title: "Leather Ledger Flatlay", desc: "Includes matching drop earrings for festive occasions." }
+        ]
+      }
+    ];
+
+    // Photos pool for 24 items in "Products you may like"
+    var recommendationPhotos = [
+      "1000197505.png", "1000197819.png", "1000198231.png", "1000199104.png", "1000199338.png",
+      "1000200159.png", "1000198213.png", "1000198215.png", "1000198216.png", "1000198218.png",
+      "1000197814.png", "1000197815.png", "1000198232.png", "1000197818.png",
+      "1000197504.png", "1000197506.png", "1000197507.png", "1000198233.png",
+      "1000198197.png", "1000198200.png", "1000198204.png", "1000198210.png", "1000199105.png",
+      "1000199337.png"
+    ];
+
+    var recomTitles = [
+      "Crescent Ruby & South Sea Pearl", "Imperial Tourmaline Choker", "Antique Matte Gold Jadau",
+      "Celvador Austrian Diamond Suite", "Rose Gold Flora Quartz", "Oxidised Boho Jhumka Suite",
+      "Austrian Polki Tassel Collar", "Faceted Solitaire Centerpiece", "Regal Casket Bridal Set",
+      "Vanity Mirror Choker Edition", "Handcrafted Lustre Collar", "Floral Micro-Plated Earrings",
+      "Royal Occasion Wear Choker", "Library Table Heirloom Set", "Midnight Velvet Keepsake",
+      "Side Profile Draped Pearl Haar", "Handheld Ruby Crescent Locket", "Emerald Silk Occasion Set",
+      "Jhumka Cabochon Display Set", "Filigree Antique Gold Earrings", "Celebration Wear Jadau Set",
+      "Mahogany Box Bridal Edition", "Rose Petal Tourmaline Haar", "Blush Tourmaline Evening Collar"
+    ];
+
+    function renderSimilarProducts() {
+      var track = document.getElementById("similarProductsTrack");
+      if (!track) return;
+      track.innerHTML = suitesDatabase.map(function(item) {
+        return '<div class="sim-card" onclick="viewOtherItem(\'' + item.id + '\')">' +
+          '<div class="sim-img-box">' +
+            '<img src="' + item.img + '" alt="' + item.name + '">' +
+          '</div>' +
+          '<div class="sim-meta">' +
+            '<div class="sim-title">' + item.name + '</div>' +
+            '<div class="sim-price">₹' + item.price.toLocaleString("en-IN") + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    function loadProductDetails() {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get("id");
+      var saved = localStorage.getItem("celvador_active_item");
+
+      if (id) {
+        currentItem = suitesDatabase.find(function(s) { return s.id === id; }) || suitesDatabase[0];
+      } else if (saved) {
+        var temp = JSON.parse(saved);
+        currentItem = suitesDatabase.find(function(s) { return s.id === temp.id || s.name === temp.name; }) || suitesDatabase[0];
+      } else {
+        currentItem = suitesDatabase[0];
+      }
+
+      document.getElementById("pdpTitleText").innerText = currentItem.name;
+      document.getElementById("pdpPriceVal").innerText = "₹" + Number(currentItem.price).toLocaleString("en-IN");
+      document.getElementById("pdpMrpVal").innerText = "₹" + (Number(currentItem.price) * 2).toLocaleString("en-IN");
+      if (currentItem.rating) document.getElementById("pdpRatingVal").innerText = currentItem.rating;
+      if (currentItem.cat) document.getElementById("specCatVal").innerText = currentItem.cat;
+
+      // Render Top Swipe Slider
+      var sliderTrack = document.getElementById("topImageSliderTrack");
+      var dotsBar = document.getElementById("topSliderDots");
+      var images = currentItem.allImages || [currentItem.img];
+
+      sliderTrack.innerHTML = images.map(function(src) {
+        return '<div class="pdp-slide-item">' +
+          '<img src="' + src + '" alt="Product Image">' +
+        '</div>';
+      }).join("");
+
+      dotsBar.innerHTML = images.map(function(_, idx) {
+        return '<span class="pdp-dot ' + (idx === 0 ? 'active' : '') + '"></span>';
+      }).join("");
+
+      sliderTrack.addEventListener("scroll", function() {
+        var idx = Math.round(sliderTrack.scrollLeft / sliderTrack.clientWidth);
+        var dots = dotsBar.querySelectorAll(".pdp-dot");
+        dots.forEach(function(d, i) {
+          if (i === idx) d.classList.add("active");
+          else d.classList.remove("active");
+        });
+      });
+
+      // Render Similar Products Row (RESTORED CALL)
+      renderSimilarProducts();
+
+      // Render Big Showcase Gallery Below
+      var galleryBox = document.getElementById("dynamicGalleryContainer");
+      galleryBox.innerHTML = currentItem.gallery.map(function(item) {
+        return '<div class="big-showcase-card">' +
+          '<img src="' + item.img + '" alt="' + item.title + '">' +
+          '<div class="showcase-desc-box">' +
+            '<h5>' + item.title + '</h5>' +
+            '<p>' + item.desc + '</p>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      // Render 24 Items in "Products You May Like"
+      var recomGrid = document.getElementById("recommendationsGrid");
+      var recomHTML = "";
+      for (var r = 0; r < 24; r++) {
+        var pPrice = 1999 + ((r % 7) * 250);
+        var pSuite = suitesDatabase[r % suitesDatabase.length];
+        recomHTML += '<div class="recom-card" onclick="viewOtherItem(\'' + pSuite.id + '\')">' +
+          '<div class="recom-img-box">' +
+            '<img src="' + recommendationPhotos[r % recommendationPhotos.length] + '" alt="' + recomTitles[r] + '">' +
+          '</div>' +
+          '<div class="recom-meta">' +
+            '<div class="recom-brand">Celvador Luxe</div>' +
+            '<div class="recom-title">' + recomTitles[r] + '</div>' +
+            '<div class="recom-price-row">' +
+              '<span class="recom-sell-price">₹' + pPrice.toLocaleString("en-IN") + '</span>' +
+              '<span class="recom-mrp-price">₹' + (pPrice * 2).toLocaleString("en-IN") + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      recomGrid.innerHTML = recomHTML;
+
+      updateBagCount();
+    }
+
+    window.viewOtherItem = function(id) {
+      var found = suitesDatabase.find(function(x) { return x.id === id; });
+      if (found) {
+        localStorage.setItem("celvador_active_item", JSON.stringify(found));
+        window.location.href = "product.html?id=" + encodeURIComponent(found.id);
+      }
+    };
+
+    function updateBagCount() {
+      var cart = JSON.parse(localStorage.getItem("celvador_cart") || "[]");
+      var count = cart.reduce(function(a, b) { return a + (b.qty || 1); }, 0);
+      document.getElementById("pdpCartCount").innerText = count;
+    }
+
+    function saveItemToCart() {
+      var cart = JSON.parse(localStorage.getItem("celvador_cart") || "[]");
+      var exists = cart.find(function(x) { return x.id === currentItem.id; });
+      if (exists) {
+        exists.qty = (exists.qty || 1) + 1;
+      } else {
+        cart.push({
+          id: currentItem.id,
+          name: currentItem.name,
+          price: currentItem.price,
+          img: currentItem.img,
+          qty: 1
+        });
+      }
+      localStorage.setItem("celvador_cart", JSON.stringify(cart));
+      updateBagCount();
+    }
+
+    window.addToBagAction = function() {
+      saveItemToCart();
+    };
+
+    window.buyNowAction = function() {
+      saveItemToCart();
+      window.location.href = "cart.html";
+    };
+
+    window.onload = loadProductDetails;
+  </script>
+</body>
+</html>

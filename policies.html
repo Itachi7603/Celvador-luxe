@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Customer Help &amp; Policies — Celvador Luxe</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --crimson: #630d16;
+      --crimson-dark: #45080e;
+      --crimson-soft: #fbf5f5;
+      --charcoal: #282c3f;
+      --gray-muted: #535766;
+      --border: #eaeaec;
+      --bg-page: #faf9f8;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-page); color: var(--charcoal); font-family: var(--font-sans); line-height: 1.6; }
+
+    header.top-nav {
+      background: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .back-btn { font-size: 1.25rem; text-decoration: none; color: var(--charcoal); font-weight: 700; }
+    .brand-title { font-family: var(--font-serif); font-size: 1.15rem; color: var(--crimson); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; text-decoration: none; }
+
+    .tab-pills-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 55px;
+      z-index: 90;
+    }
+    .tab-pills-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      background: var(--crimson-soft);
+      border: 1px solid var(--border);
+      color: var(--charcoal);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--crimson);
+      color: #ffffff;
+      border-color: var(--crimson);
+    }
+
+    .content-box {
+      max-width: 900px;
+      margin: 16px auto 40px;
+      padding: 0 14px;
+    }
+
+    .policy-section {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 16px;
+      margin-bottom: 20px;
+      display: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .policy-section.active-section { display: block; }
+
+    .sec-header {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--crimson);
+      border-bottom: 1.5px solid var(--crimson-soft);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+
+    .rule-title { font-size: 0.84rem; font-weight: 700; color: #1f1f23; margin: 16px 0 4px; display: flex; align-items: center; gap: 6px; }
+    .rule-title::before { content: "•"; color: var(--crimson); font-size: 1.2rem; }
+    .rule-desc { font-size: 0.75rem; color: var(--gray-muted); line-height: 1.65; margin-left: 12px; margin-bottom: 10px; }
+
+    .legal-clause-box {
+      background: #fcfbfa;
+      border: 1px solid #edebe9;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .legal-clause-box h6 { font-size: 0.78rem; font-weight: 700; color: #282c3f; margin-bottom: 4px; }
+    .legal-clause-box p { font-size: 0.73rem; color: var(--gray-muted); line-height: 1.6; margin-bottom: 6px; }
+    .legal-clause-box p:last-child { margin-bottom: 0; }
+
+    .alert-box {
+      background: #fdf5f6;
+      border-left: 3px solid var(--crimson);
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      color: #55141b;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    .alert-box strong { font-weight: 700; color: var(--crimson); }
+
+    .table-rules {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.72rem;
+    }
+    .table-rules th {
+      background: #f6f5f4;
+      padding: 8px 10px;
+      text-align: left;
+      border: 1px solid var(--border);
+      color: var(--charcoal);
+    }
+    .table-rules td {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      color: var(--gray-muted);
+    }
+
+    .faq-pill {
+      background: #f9f9fa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .faq-q { font-size: 0.78rem; font-weight: 700; color: var(--charcoal); margin-bottom: 4px; }
+    .faq-a { font-size: 0.72rem; color: var(--gray-muted); }
+
+    .contact-card {
+      background: var(--crimson-soft);
+      border: 1px solid rgba(99, 13, 22, 0.15);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .contact-card h5 { font-size: 0.82rem; color: var(--crimson); margin-bottom: 6px; font-weight: 700; }
+    .contact-card p { font-size: 0.75rem; color: var(--charcoal); margin-bottom: 4px; }
+
+    footer.bottom-bar {
+      text-align: center;
+      padding: 24px 14px;
+      font-size: 0.68rem;
+      color: var(--gray-muted);
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="back-btn">&larr;</a>
+      <a href="index.html" class="brand-title">Celvador Luxe</a>
+    </div>
+    <div style="font-size: 0.72rem; font-weight: 700; color: var(--crimson);">Customer Support &amp; Legal</div>
+  </header>
+
+  <!-- Horizontal Scrollable Tabs -->
+  <div class="tab-pills-bar" id="tabsBar">
+    <button class="tab-btn" onclick="switchPolicyTab('shipping')">Shipping &amp; Exchange</button>
+    <button class="tab-btn" onclick="switchPolicyTab('refund')">Cancellation &amp; Refund</button>
+    <button class="tab-btn" onclick="switchPolicyTab('care')">Jewellery Care &amp; Returns</button>
+    <button class="tab-btn" onclick="switchPolicyTab('terms')">Terms &amp; Conditions</button>
+    <button class="tab-btn" onclick="switchPolicyTab('privacy')">Privacy Policy</button>
+    <button class="tab-btn" onclick="switchPolicyTab('contact')">Contact Us</button>
+  </div>
+
+  <div class="content-box">
+
+    <!-- 1. SHIPPING AND EXCHANGE -->
+    <div class="policy-section" id="sec-shipping">
+      <h2 class="sec-header">Shipping &amp; Exchange Policy</h2>
+      
+      <div class="alert-box">
+        <strong>Dispatch Protocol:</strong> Every jewellery item undergoes standard visual quality checks prior to dispatch. Once approved, items are sealed in tamper-evident protective transit packaging to ensure safe delivery.
+      </div>
+
+      <div class="rule-title">Domestic Shipping &amp; Timelines</div>
+      <div class="rule-desc">
+        Orders are processed and handed over to express courier partners within 24–48 hours. Standard pan-India delivery arrives within <strong>5 to 7 working days</strong> from order confirmation depending on regional courier serviceability.
+      </div>
+
+      <div class="rule-title">Free Shipping &amp; Cash On Delivery</div>
+      <div class="rule-desc">
+        We provide Free Delivery on orders across all major serviceable Indian pincodes. Cash on Delivery (COD) is supported across serviceable areas. In case of high-value shipments, recipient verification may be required by courier personnel.
+      </div>
+
+      <div class="rule-title">Direct Replacement / Exchange Eligibility</div>
+      <div class="rule-desc">
+        Exchange requests must be submitted within <strong>48 hours of delivery</strong> and are strictly eligible for supplier or transit errors:
+      </div>
+      <table class="table-rules">
+        <tr>
+          <th>Return Reason Category</th>
+          <th>Resolution</th>
+        </tr>
+        <tr>
+          <td>Defective / Broken / Damaged Product</td>
+          <td>Free replacement dispatched upon claim verification</td>
+        </tr>
+        <tr>
+          <td>Wrong Product / Color Delivered</td>
+          <td>Reverse pickup arranged &amp; correct product shipped</td>
+        </tr>
+        <tr>
+          <td>Incomplete Product / Missing Parts (Earrings/Tikka)</td>
+          <td>Missing pieces dispatched promptly</td>
+        </tr>
+      </table>
+      <div class="rule-desc">
+        If an exchange cannot be fulfilled due to stock unavailability, the request will be converted into a return and refund will be processed in accordance with this policy. Once an item has been exchanged, no further exchanges will be permitted on that order.
+      </div>
+
+      <div class="rule-title">Mandatory Unboxing Video Requirement</div>
+      <div class="rule-desc">
+        In line with standard e-commerce anti-fraud guidelines, any claim regarding transit damage, broken stones, wrong item, or missing pieces must be supported by an <strong>uninterrupted, uncut and clear unboxing video</strong> recorded from the sealed outer parcel. Without verifiable video evidence, claims cannot be processed.
+      </div>
+    </div>
+
+    <!-- 2. CANCELLATION AND REFUND -->
+    <div class="policy-section" id="sec-refund">
+      <h2 class="sec-header">Cancellation &amp; Refund Policy</h2>
+      
+      <div class="rule-title">Order Cancellation Window</div>
+      <div class="rule-desc">
+        Orders can be cancelled free of charge prior to fulfillment and dispatch. Once tracking details are generated and the shipment is handed over to our delivery partner, in-transit cancellation is not supported.
+      </div>
+
+      <div class="rule-title">How Refunds Are Processed</div>
+      <div class="rule-desc">
+        Once the returned product is collected by our logistics partner and passes standard quality inspection (must be in original unused condition with tags and packaging intact), refunds will be initiated:
+      </div>
+
+      <table class="table-rules">
+        <tr>
+          <th>Refund Method</th>
+          <th>Refund Time Frame</th>
+        </tr>
+        <tr>
+          <td>Credit Card, Debit Card, Net Banking, UPI</td>
+          <td>3 to 7 Business Days (credited to original source account)</td>
+        </tr>
+        <tr>
+          <td>Cash on Delivery (COD Orders)</td>
+          <td>3 to 7 Business Days after customer updates bank/UPI details</td>
+        </tr>
+      </table>
+
+      <div class="alert-box">
+        <strong>Important Note on COD Fraud:</strong> In the event of abuse of platform policies (including excessive returns, high claim rates, repeated refusal of shipments, or fraudulent return claims), the platform reserves the right to reject returns and restrict future COD services.
+      </div>
+    </div>
+
+    <!-- 3. JEWELLERY CARE & RETURNS -->
+    <div class="policy-section" id="sec-care">
+      <h2 class="sec-header">Jewellery Care &amp; Return Guidelines</h2>
+
+      <div class="rule-title">Common Guidelines for Return &amp; Exchange</div>
+      <div class="rule-desc">
+        Prior to initiating any return or exchange, ensure the following conditions are met:
+      </div>
+      <ul style="font-size: 0.74rem; color: var(--gray-muted); margin-left: 20px; line-height: 1.8;">
+        <li>The product must be in its original condition with complete brand packaging, tags, pouches, and accessories intact.</li>
+        <li>Must be completely unused, unwashed, and unsoiled with no signs of wear, makeup, or perfume exposure.</li>
+        <li>Must not be damaged or altered while in customer possession.</li>
+        <li>Must match serial/article records of the original shipment.</li>
+        <li>At pickup, delivery agents may conduct a surface quality check; if criteria are failed, pickup and refund will not be accepted.</li>
+      </ul>
+
+      <div class="rule-title" style="margin-top: 14px;">Artisanal Fashion Jewellery Care</div>
+      <div class="faq-pill">
+        <div class="faq-q">1. Protect from Moisture &amp; Chemicals</div>
+        <div class="faq-a">Keep away from direct water, alcohol-based perfumes, hair sprays, and sanitizers to maintain long-lasting surface polish and stone lustre.</div>
+      </div>
+      <div class="faq-pill">
+        <div class="faq-q">2. Post-Wear Cleaning</div>
+        <div class="faq-a">Gently wipe pieces with a soft cotton cloth after wearing to remove sweat or surface dust before storing.</div>
+      </div>
+      <div class="faq-pill">
+        <div class="faq-q">3. Dry Storage</div>
+        <div class="faq-a">Always store flat in air-tight plastic zip pouches or inside the keepsake box away from moisture.</div>
+      </div>
+    </div>
+
+    <!-- 4. FULL-LENGTH TERMS AND CONDITIONS -->
+    <div class="policy-section" id="sec-terms">
+      <h2 class="sec-header">Terms and Conditions of Use</h2>
+
+      <div class="rule-desc" style="margin-left: 0; font-size: 0.78rem;">
+        Welcome to <strong>Celvador Luxe</strong>. These Terms and Conditions constitute a legally binding agreement between you (the "User", "Customer", or "You") and Celvador Luxe ("Platform", "We", "Our", or "Us"). By accessing, browsing, or completing a transaction on this website, you signify your full agreement to these Terms. If you do not agree with any part of these terms, you must refrain from using the platform.
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>1. User Eligibility &amp; Platform Access</h6>
+        <p>Use of the Platform is available only to persons who can form legally binding contracts under the Indian Contract Act, 1872. Persons who are "incompetent to contract" within the meaning of the Indian Contract Act, 1872, including minors and un-discharged insolvents, are not eligible to use the platform. If you are under the age of 18, you may purchase only with the active involvement and consent of a parent or legal guardian.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>2. Nature of Merchandise (Fashion &amp; Demi-Fine Disclaimer)</h6>
+        <p>All items displayed, cataloged, and sold on Celvador Luxe represent curated imitation, demi-fine, and fashion jewellery crafted using base metals such as brass, zinc alloys, and copper, layered with electroplated finishes and simulated stones.</p>
+        <p><strong>Explicit Declaration:</strong> None of our products contain solid fine gold, pure hallmarked silver, natural mined diamonds, or precious certified gemstones unless specifically accompanied by an authorized independent gemological laboratory certificate. We disclaim all claims regarding precious bullion value, investment potential, scrap value, or melting trade-in eligibility.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>3. Photographic Depiction, Colors &amp; Handcrafting Variations</h6>
+        <p>We make every diligent effort to display product colors, designs, and dimensions as accurately as studio conditions permit. However, because actual colors depend on monitor display settings, color balance, and ambient mobile brightness, subtle chromatic variations (5% to 10%) between catalog imagery and actual physical products may occur. Since many stone-setting processes involve artisanal hand-setting, minor symmetry variations represent inherent hallmarks of handcrafted goods and are not classified as manufacturing defects.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>4. Pricing, Coupon Codes &amp; System Glitches</h6>
+        <p>All pricing displayed on the Platform is listed in Indian Rupees (INR) and includes applicable GST taxes. While we strive to ensure absolute accuracy in product pricing, typographical errors or algorithmic server cache glitches may occasionally result in an incorrect selling price. In such instances, Celvador Luxe maintains the absolute legal right to decline, hold, or cancel any order placed at an erroneous price point, whether or not prepaid. Full refunds will be processed immediately to source.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>5. Order Acceptance &amp; Fulfillment Protocol</h6>
+        <p>Our business operates utilizing direct fulfillment protocols. Order placement on the website constitutes an offer to purchase, which is accepted only when the item is physically packed, labeled, and consigned to our partnered logistics carriers. In the event an item is out of stock or pincode is unserviceable, orders will be cancelled with full prompt refund.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>6. Cash on Delivery (COD) Abuse &amp; Fair Use Policy</h6>
+        <p>Cash on Delivery is provided as an open convenience. Users who exhibit fraudulent behavior—such as providing fictitious addresses, repeatedly refusing delivery without valid justification, or issuing false transit claims—shall be restricted from COD services.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>7. Mandatory Damage Claims Protocol</h6>
+        <p>Any claim of a package delivered with missing items, damaged gemstones, or incorrect contents must be substantiated by an uninterrupted, uncut 360° unboxing video recorded from the sealed outer courier parcel. In the absence of verifiable video evidence, claims cannot be processed.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>8. Limitation of Liability &amp; Dermatological Disclaimer</h6>
+        <p>Celvador Luxe shall not be liable for any indirect, punitive, or consequential damages resulting from the use or inability to use our products. Individuals with heightened personal allergies to nickel, copper, or base alloys are urged to exercise caution. Celvador Luxe accepts no liability for contact dermatological reactions.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>9. Intellectual Property &amp; Brand Copyright</h6>
+        <p>All graphical branding, brand logos ("Celvador Luxe"), website UI styling, product photography, editorial text, and code architecture are proprietary assets. Unauthorized commercial reproduction is strictly prohibited.</p>
+      </div>
+
+      <div class="legal-clause-box">
+        <h6>10. Governing Law &amp; Jurisdiction</h6>
+        <p>These Terms shall be governed by the laws of India. Any legal dispute or controversy shall be subject to the exclusive jurisdiction of the competent courts in Mumbai, Maharashtra, India.</p>
+      </div>
+    </div>
+
+    <!-- 5. PRIVACY POLICY -->
+    <div class="policy-section" id="sec-privacy">
+      <h2 class="sec-header">Privacy Policy</h2>
+
+      <div class="rule-title">Information We Collect</div>
+      <div class="rule-desc">
+        When placing an order or registering an account, we collect necessary transactional information including full name, delivery address, contact phone number, and email address for order fulfillment and consignment dispatch.
+      </div>
+
+      <div class="rule-title">Payment &amp; Financial Security</div>
+      <div class="rule-desc">
+        All financial transactions (Credit/Debit Card, UPI, Netbanking) are processed through RBI-authorized, 128-bit SSL encrypted payment gateways. Celvador Luxe does not store, capture, or have access to your private debit/credit card CVV or bank credentials.
+      </div>
+
+      <div class="rule-title">Data Protection &amp; Third Parties</div>
+      <div class="rule-desc">
+        Customer data is solely shared with verified third-party logistics partners to facilitate door-step delivery and tracking updates. We strictly prohibit the sale or sharing of your private contact details for external commercial marketing.
+      </div>
+
+      <div class="rule-title">Cookies &amp; Local Storage</div>
+      <div class="rule-desc">
+        Our website uses local web storage to preserve shopping bag items, recently viewed jewellery pieces, and active promo discounts to ensure a seamless browsing session.
+      </div>
+    </div>
+
+    <!-- 6. CONTACT US -->
+    <div class="policy-section" id="sec-contact">
+      <h2 class="sec-header">Contact Us</h2>
+
+      <div class="rule-desc">
+        Our customer support team is available to assist you with order status, exchange inquiries, styling queries, and product questions.
+      </div>
+
+      <div class="contact-card">
+        <h5>Customer Care Helpdesk</h5>
+        <p><strong>Email:</strong> celvadorluxe@gmail.com</p>
+        <p><strong>Operating Hours:</strong> Monday – Saturday | 10:00 AM – 7:00 PM IST</p>
+        <p><strong>Response Time:</strong> Inquiries are addressed within 24 working hours.</p>
+      </div>
+
+      <div class="rule-title">Grievance &amp; Escalations</div>
+      <div class="rule-desc">
+        For unresolved delivery delays or urgent shipment amendments, please write to <strong>celvadorluxe@gmail.com</strong> mentioning your Order ID in the email subject line to ensure prioritized routing to our supervisor desk.
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="bottom-bar">
+    &copy; 2026 Celvador Luxe. All legal policies are strictly governed by Indian e-commerce standards.
+  </footer>
+
+  <script>
+    function switchPolicyTab(tabId) {
+      if (tabId === 'concierge' || tabId === 'assistance') tabId = 'contact';
+
+      var allSections = document.querySelectorAll('.policy-section');
+      allSections.forEach(function(sec) { sec.classList.remove('active-section'); });
+
+      var allButtons = document.querySelectorAll('.tab-btn');
+      allButtons.forEach(function(b) { b.classList.remove('active'); });
+
+      var targetSec = document.getElementById('sec-' + tabId);
+      if (targetSec) {
+        targetSec.classList.add('active-section');
+      }
+
+      var activeBtn = Array.from(allButtons).find(function(b) {
+        var attr = b.getAttribute('onclick') || '';
+        return attr.indexOf(tabId) !== -1;
+      });
+      if (activeBtn) activeBtn.classList.add('active');
+
+      window.location.hash = tabId;
+      window.scrollTo({ top: 70, behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var hash = window.location.hash.replace('#', '');
+      var validTabs = ['shipping', 'refund', 'care', 'terms', 'privacy', 'contact'];
+      if (validTabs.indexOf(hash) !== -1) {
+        switchPolicyTab(hash);
+      } else {
+        switchPolicyTab('shipping');
+      }
+    });
+  </script>
+</body>
+</html>

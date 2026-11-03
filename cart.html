@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shopping Bag — Celvador Luxe</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Razorpay Official Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --crimson: #5e0d16;
+      --crimson-dark: #3b050b;
+      --crimson-soft: #fbf5f5;
+      --gold: #c5a059;
+      --gold-dark: #9f7d38;
+      --charcoal: #1f1f23;
+      --gray-muted: #6e717e;
+      --border: #ede8e3;
+      --bg-page: #f7f5f2;
+      --success: #03a685;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-page); color: var(--charcoal); font-family: var(--font-sans); line-height: 1.5; overflow-x: hidden; }
+
+    header.cart-nav {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 14px; }
+    .back-btn { font-size: 1.25rem; text-decoration: none; color: var(--charcoal); font-weight: 700; cursor: pointer; }
+    .brand-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--crimson); text-transform: uppercase; font-weight: 700; letter-spacing: 2px; text-decoration: none; }
+
+    .site-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 14px 100px;
+    }
+
+    .step-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #a4a6b1;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.02);
+    }
+    .step-item { transition: color 0.3s; }
+    .step-item.active { color: var(--crimson); }
+    .step-arrow { color: #d4cfcb; font-size: 0.8rem; }
+
+    .checkout-stage-pane {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .checkout-stage-pane.active-stage {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cart-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.025);
+    }
+    .card-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--charcoal);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bag-item-row {
+      display: flex;
+      gap: 14px;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #f3efeb;
+      position: relative;
+    }
+    .bag-item-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .bag-img-box {
+      width: 78px;
+      height: 98px;
+      border-radius: 8px;
+      background: #faf8f7;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .bag-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .bag-meta { flex: 1; display: flex; flex-direction: column; }
+    .bag-prod-name { font-size: 0.82rem; font-weight: 600; color: #1f1f23; margin-bottom: 4px; padding-right: 22px; }
+    .bag-price-line { font-size: 0.88rem; font-weight: 700; color: var(--crimson); margin-bottom: 8px; }
+    
+    .qty-control-row { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+    .qty-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid #dfc7b9;
+      background: #ffffff;
+      color: var(--charcoal);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-btn:active { background: var(--crimson); color: #fff; }
+    .qty-num { font-size: 0.82rem; font-weight: 700; min-width: 14px; text-align: center; }
+
+    .btn-remove-item {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #94969f;
+      cursor: pointer;
+    }
+
+    .coupon-card-row { display: flex; gap: 8px; align-items: center; }
+    .coupon-card-row input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 1px solid #ded7cf;
+      border-radius: 8px;
+      outline: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: #fbf9f8;
+    }
+    .btn-apply-coupon {
+      background: var(--crimson-soft);
+      border: 1px solid rgba(99, 13, 22, 0.25);
+      color: var(--crimson);
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .coupon-msg { font-size: 0.7rem; margin-top: 6px; display: block; font-weight: 600; }
+
+    /* Address Form */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.col-span-2 { grid-column: span 2; }
+    .form-group label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-muted); }
+    .form-group input, .form-group textarea {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #ded7cf;
+      font-size: 0.82rem;
+      outline: none;
+      font-family: inherit;
+      background: #ffffff;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--crimson); }
+    .form-group input.input-error, .form-group textarea.input-error { border-color: #e53e3e; background: #fff9f9; }
+    .field-error-text { font-size: 0.65rem; color: #e53e3e; font-weight: 600; min-height: 14px; }
+
+    /* Payment UI */
+    .pay-header-banner {
+      background: linear-gradient(135deg, #180507 0%, #3a080f 100%);
+      color: #ffffff;
+      padding: 16px 18px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(197, 160, 89, 0.25);
+    }
+    .pay-header-banner .amt-label { font-size: 0.7rem; color: #dfc7b9; text-transform: uppercase; letter-spacing: 1px; }
+    .pay-header-banner .amt-val { font-size: 1.35rem; font-weight: 700; color: #ffffff; }
+
+    .offer-strip-green {
+      background: #eefaf6;
+      border: 1px solid #ccefe3;
+      color: #038a6f;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pay-method-accordion {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #ffffff;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .pay-method-accordion.active-method {
+      border-color: var(--crimson);
+      box-shadow: 0 4px 18px rgba(99, 13, 22, 0.08);
+    }
+    .pay-accordion-header {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pay-acc-left { display: flex; align-items: center; gap: 14px; }
+    .pay-acc-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .pay-method-accordion.active-method .pay-acc-radio { border-color: var(--crimson); }
+    .pay-method-accordion.active-method .pay-acc-radio::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--crimson);
+    }
+    .pay-acc-title { font-size: 0.86rem; font-weight: 700; color: var(--charcoal); }
+    .pay-acc-sub { font-size: 0.7rem; color: var(--gray-muted); margin-top: 1px; }
+    .pay-acc-icon { width: 24px; height: 24px; color: var(--crimson); flex-shrink: 0; }
+
+    .pay-accordion-body {
+      display: none;
+      padding: 14px 18px 18px;
+      background: #faf8f6;
+      border-top: 1px solid var(--border);
+      font-size: 0.76rem;
+      color: var(--gray-muted);
+    }
+    .pay-method-accordion.active-method .pay-accordion-body { display: block; }
+
+    .upi-apps-row { display: flex; gap: 8px; margin: 10px 0 12px; flex-wrap: wrap; }
+    .upi-pill-tag {
+      background: #ffffff;
+      border: 1px solid #ded7cf;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .bill-row { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 8px; color: var(--gray-muted); }
+    .bill-row.total-line {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      border-top: 1px dashed var(--border);
+      padding-top: 12px;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
+    .checkout-fixed-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+    }
+    .checkout-total-col { display: flex; flex-direction: column; }
+    .checkout-total-label { font-size: 0.68rem; color: var(--gray-muted); text-transform: uppercase; font-weight: 700; }
+    .checkout-total-val { font-size: 1.25rem; font-weight: 700; color: var(--crimson); }
+    
+    .btn-main-action {
+      background: var(--crimson);
+      color: #ffffff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+    }
+    .btn-main-action:active { background: var(--crimson-dark); }
+
+    /* Royal Order Modal */
+    .order-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 3, 5, 0.82);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .order-royal-card {
+      background: #ffffff;
+      border-radius: 18px;
+      max-width: 420px;
+      width: 100%;
+      padding: 30px 24px 26px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      border: 1px solid #ebd9c8;
+      animation: modalPop 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .order-royal-card::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 1px dashed #d5beaa;
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    .royal-seal-badge {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--crimson) 0%, #30060a 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(99, 13, 22, 0.4);
+      border: 2px solid var(--gold);
+    }
+    .royal-seal-badge svg { width: 32px; height: 32px; stroke: #ffffff; stroke-width: 2.2; }
+
+    .royal-card-brand {
+      font-family: var(--font-serif);
+      font-size: 0.88rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+    .royal-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      color: var(--crimson-dark);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .order-tag-plate {
+      display: inline-block;
+      background: #f7ede4;
+      border: 1px solid #dfc7b9;
+      color: var(--crimson);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .order-meta-receipt {
+      background: #faf8f6;
+      border: 1px solid #ede4dc;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      text-align: left;
+      font-size: 0.74rem;
+    }
+    .meta-receipt-row { display: flex; justify-content: space-between; margin-bottom: 7px; color: var(--charcoal); }
+    .meta-receipt-row:last-child { margin-bottom: 0; }
+    .meta-receipt-label { color: var(--gray-muted); }
+    .meta-receipt-val { font-weight: 700; }
+
+    .btn-receipt-track {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--crimson);
+      color: #ffffff;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-receipt-shop {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      color: var(--charcoal);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+
+    .empty-cart-state {
+      text-align: center;
+      padding: 70px 20px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    .empty-cart-state h4 { font-family: var(--font-serif); font-size: 1.45rem; color: var(--crimson-dark); margin-bottom: 6px; }
+    .empty-cart-state p { font-size: 0.78rem; color: var(--gray-muted); margin-bottom: 20px; }
+    .btn-shop-now {
+      display: inline-block;
+      background: var(--crimson);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="cart-nav">
+    <div class="nav-left">
+      <span class="back-btn" onclick="handleNavigationBack()">&larr;</span>
+      <a href="index.html" class="brand-title">Celvador Luxe</a>
+    </div>
+    <div style="font-size: 0.72rem; font-weight: 700; color: #03a685; letter-spacing: 0.5px;">100% SECURE CHECKOUT</div>
+  </header>
+
+  <div class="site-container">
+    <div class="step-banner">
+      <span class="step-item active" id="badgeStep1">1. BAG</span>
+      <span class="step-arrow">&rarr;</span>
+      <span class="step-item" id="badgeStep2">2. ADDRESS</span>
+      <span class="step-arrow">&rarr;</span>
+      <span class="step-item" id="badgeStep3">3. PAYMENT</span>
+    </div>
+
+    <div id="cartLoadedSection">
+      
+      <!-- STAGE 1: SHOPPING BAG ITEMS -->
+      <div id="stageBagItems" class="checkout-stage-pane active-stage">
+        <div class="cart-card">
+          <div class="card-title">
+            <span>Items In Bag (<span id="cartItemsQtyTitle">0</span>)</span>
+          </div>
+          <div id="cartItemsContainer"></div>
+        </div>
+
+        <div class="cart-card">
+          <div class="card-title">Apply Coupon / Discount Code</div>
+          <div class="coupon-card-row">
+            <input type="text" id="couponInput" placeholder="Enter Code (e.g. FESTIVEVIP)">
+            <button class="btn-apply-coupon" onclick="applyCouponCode()">Apply</button>
+          </div>
+          <span class="coupon-msg" id="couponFeedback"></span>
+        </div>
+
+        <div class="cart-card">
+          <div class="card-title">Price Summary</div>
+          <div class="bill-row">
+            <span>Total MRP</span>
+            <span id="billMrp">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Discount</span>
+            <span style="color:#03a685;" id="billDiscount">-₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Delivery Charges</span>
+            <span style="color:#03a685;">FREE</span>
+          </div>
+          <div class="bill-row total-line">
+            <span>Total Payable</span>
+            <span id="billTotalPayable">₹0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2: DELIVERY ADDRESS -->
+      <div id="stageAddress" class="checkout-stage-pane">
+        <div class="cart-card">
+          <div class="card-title">Delivery Address</div>
+          <div class="form-grid">
+            
+            <div class="form-group col-span-2">
+              <label>Full Name *</label>
+              <input type="text" id="custName" placeholder="Full Name" oninput="clearError('custName')">
+              <span class="field-error-text" id="err-custName"></span>
+            </div>
+
+            <div class="form-group">
+              <label>Mobile Number *</label>
+              <input type="tel" id="custPhone" placeholder="10-digit number" maxlength="10" oninput="clearError('custPhone')">
+              <span class="field-error-text" id="err-custPhone"></span>
+            </div>
+
+            <div class="form-group">
+              <label>PIN Code *</label>
+              <input type="number" id="custPin" placeholder="6-digit PIN" maxlength="6" oninput="handlePincodeChange(this.value)">
+              <span class="field-error-text" id="err-custPin"></span>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>Complete House / Flat / Street Address *</label>
+              <textarea id="custAddress" rows="2" placeholder="Building name, Flat / House No, Area / Landmark" oninput="clearError('custAddress')"></textarea>
+              <span class="field-error-text" id="err-custAddress"></span>
+            </div>
+
+            <div class="form-group">
+              <label>City / District *</label>
+              <input type="text" id="custCity" placeholder="City" oninput="clearError('custCity')">
+              <span class="field-error-text" id="err-custCity"></span>
+            </div>
+
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" id="custState" placeholder="State" oninput="clearError('custState')">
+              <span class="field-error-text" id="err-custState"></span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: PAYMENTS ACCORDION -->
+      <div id="stagePayment" class="checkout-stage-pane">
+        
+        <div class="pay-header-banner">
+          <div>
+            <div class="amt-label">Total Payable</div>
+            <div class="amt-val" id="payBannerAmount">₹0</div>
+          </div>
+          <div style="font-size:0.75rem; color:#c5a059; font-weight:700;">100% Encrypted</div>
+        </div>
+
+        <div class="offer-strip-green">
+          <span>✓</span> 100% Insured Delivery with tamper-proof keepsake box
+        </div>
+
+        <!-- 1. UPI Payment Option -->
+        <div class="pay-method-accordion active-method" id="accUPI" onclick="togglePaymentMethod('UPI')">
+          <div class="pay-accordion-header">
+            <div class="pay-acc-left">
+              <div class="pay-acc-radio"></div>
+              <div>
+                <div class="pay-acc-title">UPI (Google Pay, PhonePe, Paytm, QR)</div>
+                <div class="pay-acc-sub">Instant zero-fee payment via Razorpay</div>
+              </div>
+            </div>
+            <svg class="pay-acc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+          <div class="pay-accordion-body">
+            <div class="upi-apps-row">
+              <span class="upi-pill-tag">Google Pay</span>
+              <span class="upi-pill-tag">PhonePe</span>
+              <span class="upi-pill-tag">Paytm</span>
+              <span class="upi-pill-tag">BHIM UPI</span>
+            </div>
+            <p>Click below to launch official Razorpay live gateway.</p>
+          </div>
+        </div>
+
+        <!-- 2. Cards Option -->
+        <div class="pay-method-accordion" id="accCARD" onclick="togglePaymentMethod('CARD')">
+          <div class="pay-accordion-header">
+            <div class="pay-acc-left">
+              <div class="pay-acc-radio"></div>
+              <div>
+                <div class="pay-acc-title">Credit / Debit / ATM Card</div>
+                <div class="pay-acc-sub">Visa, Mastercard, RuPay, Maestro</div>
+              </div>
+            </div>
+            <svg class="pay-acc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <div class="pay-accordion-body">
+            <p>Safe 128-bit RBI compliant card gateway via Razorpay.</p>
+          </div>
+        </div>
+
+        <!-- 3. Net Banking Option -->
+        <div class="pay-method-accordion" id="accNETBANKING" onclick="togglePaymentMethod('NETBANKING')">
+          <div class="pay-accordion-header">
+            <div class="pay-acc-left">
+              <div class="pay-acc-radio"></div>
+              <div>
+                <div class="pay-acc-title">Net Banking</div>
+                <div class="pay-acc-sub">HDFC, ICICI, SBI, Axis &amp; 50+ Banks</div>
+              </div>
+            </div>
+            <svg class="pay-acc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"></path>
+            </svg>
+          </div>
+          <div class="pay-accordion-body">
+            <p>Direct login with your bank portal to authorise payment securely.</p>
+          </div>
+        </div>
+
+        <!-- 4. Cash on Delivery (COD) Option -->
+        <div class="pay-method-accordion" id="accCOD" onclick="togglePaymentMethod('COD')">
+          <div class="pay-accordion-header">
+            <div class="pay-acc-left">
+              <div class="pay-acc-radio"></div>
+              <div>
+                <div class="pay-acc-title">Cash on Delivery (COD)</div>
+                <div class="pay-acc-sub">Pay in cash or UPI at the doorstep upon arrival</div>
+              </div>
+            </div>
+            <svg class="pay-acc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M6 12h.01M18 12h.01"></path>
+            </svg>
+          </div>
+          <div class="pay-accordion-body">
+            <p>No upfront payment needed. Please keep exact cash or UPI app ready during delivery.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Clean Empty Cart State -->
+    <div class="empty-cart-state" id="emptyCartSection" style="display:none;">
+      <h4>Your Shopping Bag Is Empty</h4>
+      <p>Discover our curated haute joaillerie suites and designer pieces.</p>
+      <a href="index.html" class="btn-shop-now">Continue Shopping</a>
+    </div>
+  </div>
+
+  <!-- Bottom Checkout Action Bar -->
+  <div class="checkout-fixed-bar" id="checkoutFixedBar">
+    <div class="checkout-total-col">
+      <span class="checkout-total-label">Total Amount</span>
+      <span class="checkout-total-val" id="barFinalAmount">₹0</span>
+    </div>
+    <button class="btn-main-action" id="btnMainStepAction" onclick="handleStepForward()">Proceed to Address &rarr;</button>
+  </div>
+
+  <!-- Royal Atelier Order Success Modal -->
+  <div class="order-modal-backdrop" id="orderSuccessModal">
+    <div class="order-royal-card">
+      <div class="royal-seal-badge">
+        <svg viewBox="0 0 24 24" fill="none">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="royal-card-brand">Celvador Luxe</div>
+      <h3 class="royal-card-title">Order Confirmed!</h3>
+      <div class="order-tag-plate" id="confirmedOrderId">ORDER #CL-782190</div>
+      
+      <p style="font-size:0.75rem; color:#535766; margin-bottom:12px; line-height:1.5;">
+        Thank you for choosing Celvador Luxe. Your order has been placed and will be dispatched soon.
+      </p>
+
+      <div class="order-meta-receipt">
+        <div class="meta-receipt-row">
+          <span class="meta-receipt-label">Customer Name:</span>
+          <span class="meta-receipt-val" id="recCustName">-</span>
+        </div>
+        <div class="meta-receipt-row">
+          <span class="meta-receipt-label">Payment Method:</span>
+          <span class="meta-receipt-val" id="recPayMode">-</span>
+        </div>
+        <div class="meta-receipt-row">
+          <span class="meta-receipt-label">Total Amount:</span>
+          <span class="meta-receipt-val" id="recPayAmt" style="color:var(--crimson);">-</span>
+        </div>
+        <div class="meta-receipt-row">
+          <span class="meta-receipt-label">Estimated Delivery:</span>
+          <span class="meta-receipt-val" style="color:#03a685;">3 - 5 Business Days</span>
+        </div>
+      </div>
+
+      <button class="btn-receipt-track" onclick="goToTrackOrder()">Track Your Order &rarr;</button>
+      <a href="index.html" class="btn-receipt-shop">Continue Shopping</a>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // RAZORPAY OFFICIAL LIVE KEY (FROM YOUR APPROVED DASHBOARD)
+    // =========================================================================
+    var RAZORPAY_KEY_ID = "rzp_live_TqdYJTdHubH3Tj"; 
+
+    var currentStep = 1;
+    var selectedPayMethod = "UPI";
+    var appliedDiscountAmount = 0;
+    var lastCreatedOrderNumber = "";
+
+    function handlePincodeChange(pinVal) {
+      clearError('custPin');
+      var clean = pinVal ? pinVal.toString().trim() : "";
+
+      if (clean.length < 6) {
+        document.getElementById("custCity").value = "";
+        document.getElementById("custState").value = "";
+        return;
+      }
+
+      if (clean.length === 6) {
+        fetch("https://api.postalpincode.in/pincode/" + clean)
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d[0] && d[0].Status === "Success" && d[0].PostOffice && d[0].PostOffice.length > 0) {
+              var po = d[0].PostOffice[0];
+              document.getElementById("custCity").value = po.District || po.Block || "";
+              document.getElementById("custState").value = po.State || "";
+              clearError('custCity');
+              clearError('custState');
+            } else {
+              document.getElementById("custCity").value = "";
+              document.getElementById("custState").value = "";
+              setError("custPin", "Invalid PIN code.");
+            }
+          })
+          .catch(function() {
+            var prefix = clean.substring(0, 2);
+            if (prefix === "40") {
+              document.getElementById("custCity").value = "Mumbai";
+              document.getElementById("custState").value = "Maharashtra";
+            }
+          });
+      }
+    }
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem("celvador_cart") || "[]");
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("celvador_cart", JSON.stringify(cart));
+      renderCartUI();
+    }
+
+    function togglePaymentMethod(method) {
+      selectedPayMethod = method;
+      document.querySelectorAll(".pay-method-accordion").forEach(function(el) {
+        el.classList.remove("active-method");
+      });
+      var target = document.getElementById("acc" + method);
+      if (target) target.classList.add("active-method");
+
+      var btn = document.getElementById("btnMainStepAction");
+      if (method === "COD") {
+        btn.innerText = "Place COD Order →";
+      } else {
+        btn.innerText = "Pay via " + method + " →";
+      }
+    }
+
+    function clearError(fieldId) {
+      var field = document.getElementById(fieldId);
+      if (field) field.classList.remove("input-error");
+      var errSpan = document.getElementById("err-" + fieldId);
+      if (errSpan) errSpan.innerText = "";
+    }
+
+    function setError(fieldId, msg) {
+      var field = document.getElementById(fieldId);
+      if (field) field.classList.add("input-error");
+      var errSpan = document.getElementById("err-" + fieldId);
+      if (errSpan) errSpan.innerText = msg;
+    }
+
+    function validateAddressForm() {
+      var isValid = true;
+      var name = document.getElementById("custName").value.trim();
+      var phone = document.getElementById("custPhone").value.trim();
+      var pin = document.getElementById("custPin").value.trim();
+      var addr = document.getElementById("custAddress").value.trim();
+      var city = document.getElementById("custCity").value.trim();
+      var state = document.getElementById("custState").value.trim();
+
+      if (!name || name.length < 3 || !/^[a-zA-Z\s]+$/.test(name)) {
+        setError("custName", "Please enter a valid full name.");
+        isValid = false;
+      }
+
+      var invalidPatterns = ["1234567890", "0000000000", "1111111111", "9999999999", "8888888888"];
+      if (!phone || !/^[6-9]\d{9}$/.test(phone) || invalidPatterns.indexOf(phone) !== -1) {
+        setError("custPhone", "Please enter a valid 10-digit mobile number.");
+        isValid = false;
+      }
+
+      if (!pin || !/^[1-9][0-9]{5}$/.test(pin)) {
+        setError("custPin", "Please enter a valid 6-digit postal PIN code.");
+        isValid = false;
+      }
+
+      if (!addr || addr.length < 8) {
+        setError("custAddress", "Please provide complete street/house address.");
+        isValid = false;
+      }
+
+      if (!city || city.length < 2) {
+        setError("custCity", "Please enter city or district.");
+        isValid = false;
+      }
+      if (!state || state.length < 2) {
+        setError("custState", "Please enter state.");
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function renderCartUI() {
+      var cart = getCart();
+      var loadedSec = document.getElementById("cartLoadedSection");
+      var emptySec = document.getElementById("emptyCartSection");
+      var bottomBar = document.getElementById("checkoutFixedBar");
+      var itemsBox = document.getElementById("cartItemsContainer");
+
+      if (cart.length === 0) {
+        loadedSec.style.display = "none";
+        bottomBar.style.display = "none";
+        emptySec.style.display = "block";
+        return;
+      }
+
+      loadedSec.style.display = "block";
+      bottomBar.style.display = "flex";
+      emptySec.style.display = "none";
+
+      var totalItems = 0;
+      var totalSelling = 0;
+
+      itemsBox.innerHTML = cart.map(function(item, idx) {
+        var qty = item.qty || 1;
+        totalItems += qty;
+        totalSelling += (Number(item.price) * qty);
+
+        return '<div class="bag-item-row">' +
+          '<div class="bag-img-box">' +
+            '<img src="' + item.img + '" alt="' + item.name + '">' +
+          '</div>' +
+          '<div class="bag-meta">' +
+            '<button class="btn-remove-item" onclick="deleteCartItem(' + idx + ')">&times;</button>' +
+            '<div class="bag-prod-name">' + item.name + '</div>' +
+            '<div class="bag-price-line">₹' + Number(item.price).toLocaleString("en-IN") + '</div>' +
+            '<div class="qty-control-row">' +
+              '<button class="qty-btn" onclick="adjustItemQty(' + idx + ', -1)">-</button>' +
+              '<span class="qty-num">' + qty + '</span>' +
+              '<button class="qty-btn" onclick="adjustItemQty(' + idx + ', 1)">+</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      var totalMrp = totalSelling * 2;
+      var totalDiscount = (totalMrp - totalSelling) + appliedDiscountAmount;
+      var finalPayable = Math.max(0, totalSelling - appliedDiscountAmount);
+
+      document.getElementById("cartItemsQtyTitle").innerText = totalItems;
+      document.getElementById("billMrp").innerText = "₹" + totalMrp.toLocaleString("en-IN");
+      document.getElementById("billDiscount").innerText = "-₹" + totalDiscount.toLocaleString("en-IN");
+      document.getElementById("billTotalPayable").innerText = "₹" + finalPayable.toLocaleString("en-IN");
+      document.getElementById("barFinalAmount").innerText = "₹" + finalPayable.toLocaleString("en-IN");
+      document.getElementById("payBannerAmount").innerText = "₹" + finalPayable.toLocaleString("en-IN");
+    }
+
+    window.applyCouponCode = function() {
+      var code = document.getElementById("couponInput").value.trim().toUpperCase();
+      var feedback = document.getElementById("couponFeedback");
+      if (code === "FESTIVEVIP") {
+        appliedDiscountAmount = 500;
+        feedback.style.color = "#03a685";
+        feedback.innerText = "Coupon FESTIVEVIP applied! ₹500 extra discount saved.";
+      } else {
+        appliedDiscountAmount = 0;
+        feedback.style.color = "#e53e3e";
+        feedback.innerText = "Invalid coupon code.";
+      }
+      renderCartUI();
+    };
+
+    window.adjustItemQty = function(idx, change) {
+      var cart = getCart();
+      if (!cart[idx]) return;
+      cart[idx].qty = (cart[idx].qty || 1) + change;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      saveCart(cart);
+    };
+
+    window.deleteCartItem = function(idx) {
+      var cart = getCart();
+      cart.splice(idx, 1);
+      saveCart(cart);
+    };
+
+    function updateStepView(isBackNav) {
+      var panes = [
+        document.getElementById("stageBagItems"),
+        document.getElementById("stageAddress"),
+        document.getElementById("stagePayment")
+      ];
+
+      panes.forEach(function(pane, idx) {
+        if (idx === (currentStep - 1)) {
+          pane.classList.add("active-stage");
+        } else {
+          pane.classList.remove("active-stage");
+        }
+      });
+
+      document.getElementById("badgeStep1").classList.toggle("active", currentStep >= 1);
+      document.getElementById("badgeStep2").classList.toggle("active", currentStep >= 2);
+      document.getElementById("badgeStep3").classList.toggle("active", currentStep >= 3);
+
+      var btn = document.getElementById("btnMainStepAction");
+      if (currentStep === 1) {
+        btn.innerText = "Proceed to Address →";
+      } else if (currentStep === 2) {
+        btn.innerText = "Proceed to Payment →";
+      } else if (currentStep === 3) {
+        togglePaymentMethod(selectedPayMethod);
+      }
+
+      if (!isBackNav) {
+        window.history.pushState({ step: currentStep }, "", "?step=" + currentStep);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onpopstate = function(e) {
+      if (e.state && e.state.step) {
+        currentStep = e.state.step;
+        updateStepView(true);
+      } else {
+        window.location.href = "index.html";
+      }
+    };
+
+    window.handleNavigationBack = function() {
+      if (currentStep > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "index.html";
+      }
+    };
+
+    window.handleStepForward = function() {
+      if (currentStep === 1) {
+        currentStep = 2;
+        updateStepView(false);
+      } else if (currentStep === 2) {
+        if (!validateAddressForm()) {
+          window.scrollTo({ top: 100, behavior: 'smooth' });
+          return;
+        }
+        currentStep = 3;
+        updateStepView(false);
+      } else if (currentStep === 3) {
+        executeCheckoutTransaction();
+      }
+    };
+
+    function executeCheckoutTransaction() {
+      var cart = getCart();
+      var totalSelling = cart.reduce(function(acc, item) { return acc + (Number(item.price) * (item.qty || 1)); }, 0);
+      var finalPayable = Math.max(0, totalSelling - appliedDiscountAmount);
+
+      var name = document.getElementById("custName").value.trim();
+      var phone = document.getElementById("custPhone").value.trim();
+      var orderNum = "CL-" + Math.floor(100000 + Math.random() * 900000);
+      lastCreatedOrderNumber = orderNum;
+
+      if (selectedPayMethod === "COD") {
+        displaySuccessReceipt(orderNum, name, "Cash on Delivery (COD)", "₹" + finalPayable.toLocaleString("en-IN"));
+        return;
+      }
+
+      // Live Razorpay Launch
+      var rzpOptions = {
+        "key": RAZORPAY_KEY_ID,
+        "amount": finalPayable * 100,
+        "currency": "INR",
+        "name": "Celvador Luxe",
+        "description": "Order #" + orderNum,
+        "handler": function (response) {
+          displaySuccessReceipt(orderNum, name, selectedPayMethod + " (ID: " + response.razorpay_payment_id + ")", "₹" + finalPayable.toLocaleString("en-IN"));
+        },
+        "prefill": {
+          "name": name,
+          "contact": phone
+        },
+        "theme": {
+          "color": "#5e0d16"
+        }
+      };
+
+      try {
+        var rzp = new Razorpay(rzpOptions);
+        rzp.on('payment.failed', function (resp){
+          alert("Payment could not be completed. You can choose Cash on Delivery.");
+        });
+        rzp.open();
+      } catch (e) {
+        alert("Payment Gateway could not be opened. Please verify your connection.");
+      }
+    }
+
+    function displaySuccessReceipt(orderNum, custName, payMode, finalAmt) {
+      document.getElementById("confirmedOrderId").innerText = "ORDER #" + orderNum;
+      document.getElementById("recCustName").innerText = custName;
+      document.getElementById("recPayMode").innerText = payMode;
+      document.getElementById("recPayAmt").innerText = finalAmt;
+
+      var orderRecord = {
+        orderId: orderNum,
+        date: new Date().toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }),
+        customer: {
+          name: custName,
+          phone: document.getElementById("custPhone").value.trim(),
+          pin: document.getElementById("custPin").value.trim(),
+          address: document.getElementById("custAddress").value.trim(),
+          city: document.getElementById("custCity").value.trim(),
+          state: document.getElementById("custState").value.trim()
+        },
+        items: getCart(),
+        paymentMode: payMode,
+        status: "Processing"
+      };
+
+      var existingOrders = JSON.parse(localStorage.getItem("celvador_orders") || "[]");
+      existingOrders.unshift(orderRecord);
+      localStorage.setItem("celvador_orders", JSON.stringify(existingOrders));
+
+      localStorage.removeItem("celvador_cart");
+
+      document.getElementById("cartLoadedSection").style.display = "none";
+      document.getElementById("checkoutFixedBar").style.display = "none";
+      document.getElementById("orderSuccessModal").style.display = "flex";
+    }
+
+    window.goToTrackOrder = function() {
+      document.getElementById("orderSuccessModal").style.display = "none";
+      window.location.href = "track.html?order=" + encodeURIComponent(lastCreatedOrderNumber);
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+      renderCartUI();
+      window.history.replaceState({ step: 1 }, "", "?step=1");
+      updateStepView(true);
+    });
+  </script>
+</body>
+</html>
